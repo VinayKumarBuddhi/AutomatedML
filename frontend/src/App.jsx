@@ -9,11 +9,13 @@ import Signup from "./pages/Signup";
 import Dashboard from "./pages/Dashboard";
 import ProtectedRoute from "./pages/ProtectedRoute";
 import ForgotPassword from './pages/ForgotPassword';
+import Landing from './pages/Landing';
 
 function App() {
   return (
     <Router>
       <Routes>
+        <Route path="/" element={<Landing />} />
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<Signup />} />
         <Route path="/forgotpassword" element={<ForgotPassword />} />

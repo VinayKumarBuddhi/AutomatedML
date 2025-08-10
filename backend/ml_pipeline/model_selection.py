@@ -141,17 +141,29 @@ def run_automl(df, task):
     best_score = -np.inf
     best_model = None
     best_model_name = ""
+    best_test_score = None
+    model_performance_details = []
 
     for name, (model, param_grid) in models.items():
         pipe = Pipeline(steps=[("preprocessor", preprocessor), ("model", model)])
 
         if param_grid:
-            search = RandomizedSearchCV(pipe, param_distributions=param_grid, cv=3, n_iter=3, scoring=scoring, random_state=42, n_jobs=-1)
+            search = RandomizedSearchCV(
+                pipe,
+                param_distributions=param_grid,
+                cv=3,
+                n_iter=3,
+                scoring=scoring,
+                random_state=42,
+                n_jobs=-1,
+            )
             search.fit(X_train, y_train)
             val_score = search.best_score_
             final_model = search.best_estimator_
         else:
-            scores = cross_val_score(pipe, X_train, y_train, cv=3, scoring=scoring, n_jobs=-1)
+            scores = cross_val_score(
+                pipe, X_train, y_train, cv=3, scoring=scoring, n_jobs=-1
+            )
             val_score = scores.mean()
             final_model = pipe.fit(X_train, y_train)
 
@@ -160,10 +172,19 @@ def run_automl(df, task):
 
         print(f"{name}: CV Score = {val_score:.4f}, Test Score = {test_score:.4f}")
 
+        model_performance_details.append(
+            {
+                "model": name,
+                "cv_score": float(val_score),
+                "test_score": float(test_score),
+            }
+        )
+
         if val_score > best_score:
             best_score = val_score
             best_model = final_model
             best_model_name = name
+            best_test_score = float(test_score)
 
-    return best_model, best_score, best_model_name
+    return best_model, float(best_score), best_model_name, best_test_score, model_performance_details
 

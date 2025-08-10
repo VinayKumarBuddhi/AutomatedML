@@ -44,17 +44,19 @@ def automl():
     task = data['task']
 
     df = pd.read_csv(file_path)
-    best_model, best_score, model_name = run_automl(df, task)
+    best_model, best_score, model_name, best_test_score, model_details = run_automl(df, task)
 
     model_path = os.path.join(MODEL_FOLDER, f"{model_name}.pkl")
     with open(model_path, "wb") as f:
         pickle.dump(best_model, f)
 
     return jsonify({
-    "best_model": model_name,
-    "score": best_score,
-    "model_filename": f"{model_name}.pkl"
-})
+        "best_model": model_name,
+        "cv_score": best_score,
+        "test_score": best_test_score,
+        "model_filename": f"{model_name}.pkl",
+        "models": model_details,
+    })
 
 
 
@@ -90,7 +92,7 @@ def query_dataset():
     code = generate_pandas_code(query, df)
     print("code",code)
     if code is None:
-        return jsonify({"error": "Failed to generate code"}), 500
+        return jsonify({"error": "Failed to generate code", "code": None}), 500
     code = extract_code(code)
     print("extracted code",code)
     # Execute generated code safely
@@ -99,19 +101,19 @@ def query_dataset():
         exec(code, {}, local_vars)
         result = local_vars.get("result", None)
         if result is None:
-            return jsonify({"error": "Code did not produce any result"}), 500
+            return jsonify({"error": "Code did not produce any result", "code": code}), 500
         if isinstance(result, pd.DataFrame):
             print("***********************************",type(result))
-            return jsonify({"result": result.to_dict(orient="records")})
+            return jsonify({"result": result.to_dict(orient="records"), "code": code})
         elif isinstance(result, pd.Series):
-            return jsonify({"result": result.to_dict()})
+            return jsonify({"result": result.to_dict(), "code": code})
         elif isinstance(result, pd.Index):
-            return jsonify({"result": list(result)})
+            return jsonify({"result": list(result), "code": code})
         else:
-            return jsonify({"result": result})
+            return jsonify({"result": result, "code": code})
     except Exception as e:
         print(f"❌ Error executing generated code: {e}")
-        return jsonify({"error": "Execution failed"}), 500
+        return jsonify({"error": "Execution failed", "code": code}), 500
 
 if __name__ == '__main__':
     port = int(os.environ.get("PORT", 5000))

@@ -5,6 +5,7 @@ export default function QueryDataset({ filePath }) {
   const [results, setResults] = useState([])
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState(null)
+  const [code, setCode] = useState("")
 
   const handleSubmit = async () => {
     setLoading(true)
@@ -16,20 +17,19 @@ export default function QueryDataset({ filePath }) {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ file_path: filePath, query })
       })
-      console.log("res",res)
       const data = await res.json()
-      console.log("data",data)
 
-      if (data.error) {
-        setError(data.error)
+      setCode(data.code || "")
+      if (!res.ok || data.error) {
+        setError(data.error || "Failed to run query")
         setResults([])
       } else {
-        setResults(data.result || [])
+        setResults(data.result ?? [])
       }
     } catch (err) {
-      console.log("err",err)
       setError("Failed to query dataset")
       setResults([])
+      setCode("")
     }
 
     setLoading(false)
@@ -54,6 +54,13 @@ export default function QueryDataset({ filePath }) {
 
       {loading && <p>Loading...</p>}
       {error && <p className="text-red-500 mt-2">{error}</p>}
+
+      {code && (
+        <div className="mt-3">
+          <h3 className="font-medium mb-1">Generated code</h3>
+          <pre className="bg-gray-100 p-3 rounded overflow-x-auto text-sm"><code>{code}</code></pre>
+        </div>
+      )}
       {/* Table for array of objects */}
       {!loading && results && Array.isArray(results) && results.length > 0 && typeof results[0] === "object" && (
         <table className="w-full mt-4 table-auto border">
@@ -71,7 +78,7 @@ export default function QueryDataset({ filePath }) {
               <tr key={i}>
                 {Object.values(row).map((val, j) => (
                   <td key={j} className="border px-2 py-1">
-                    {val}
+                    {String(val)}
                   </td>
                 ))}
               </tr>
@@ -85,7 +92,7 @@ export default function QueryDataset({ filePath }) {
           <strong>Result:</strong>
           <ul className="list-disc ml-6">
             {results.map((item, idx) => (
-              <li key={idx}>{item}</li>
+              <li key={idx}>{String(item)}</li>
             ))}
           </ul>
         </div>

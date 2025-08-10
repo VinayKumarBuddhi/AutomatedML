@@ -27,14 +27,20 @@ def generate_pandas_code(query, df):
 
         # Template with dynamic columns info
         prompt_template = """
-You are a helpful assistant that converts natural language questions into pandas code.
-Use the dataframe `df` with the following columns: {columns}
+You are a coding assistant that translates a user's question into runnable Python pandas code.
+You must operate ONLY on the provided dataframe `df` which has columns: {columns}
 
-Translate the user's question into valid Python code that uses pandas to answer the question.
-Only return the code. Do not explain anything.
+Return ONLY Python code (no backticks, no prose). Follow these rules strictly:
+- Do NOT import libraries, read/write files, access network, or use plotting/display functions.
+- Use pandas operations on `df` only. Assume `df` is already loaded.
+- The final answer MUST be assigned to a variable named `result`.
+- `result` MUST be one of: pandas.DataFrame, pandas.Series, pandas.Index, list, dict, int, float, str, or bool.
+- Do NOT print. Do NOT return from functions. Do NOT define functions. Just straight-line code.
+- Prefer DataFrame outputs for tabular answers (e.g., use reset_index() after groupby to return a table).
+- Use the exact column names shown above.
 
-Question: {query}
-Python Code:
+User question: {query}
+Python code only:
 """.strip()
 
         # Generate the code using Gemini
