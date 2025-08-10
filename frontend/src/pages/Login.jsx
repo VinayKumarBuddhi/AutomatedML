@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { auth } from "../firebase";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import ErrorModal from "../components/ErrorModal";
 import bg from "../assets/bg.jpg"
 
@@ -81,9 +81,7 @@ export default function Login() {
               placeholder="Enter your password"
             />
             <div className="mt-2">
-              <a href="/forgotpassword" className="text-sm text-blue-500 hover:underline">
-              Forgot Password?
-              </a>
+              <Link to="/forgotpassword" className="text-sm text-blue-500 hover:underline">Forgot Password?</Link>
             </div>
           </div>
 
@@ -97,9 +95,7 @@ export default function Login() {
 
         <div className="mt-6 text-center">
           <span className="text-sm text-gray-600">Don't have an account? </span>
-          <a href="/signup" className="text-sm text-blue-500 hover:underline">
-            Sign Up
-          </a>
+          <Link to="/signup" className="text-sm text-blue-500 hover:underline">Sign Up</Link>
         </div>
       </div>
 

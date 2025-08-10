@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { createUserWithEmailAndPassword } from "firebase/auth";
 import { auth } from "../firebase";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import ErrorModal from "../components/ErrorModal"; 
 import bg from "../assets/bg.jpg"
 
@@ -116,9 +116,7 @@ export default function SignUp() {
 
         <div className="mt-6 text-center">
           <span className="text-sm text-gray-600">Already have an account? </span>
-          <a href="/login" className="text-sm text-blue-500 hover:underline">
-            Login
-          </a>
+          <Link to="/login" className="text-sm text-blue-500 hover:underline">Login</Link>
         </div>
       </div>
 
