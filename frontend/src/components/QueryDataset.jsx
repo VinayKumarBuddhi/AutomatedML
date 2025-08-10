@@ -6,13 +6,14 @@ export default function QueryDataset({ filePath }) {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState(null)
   const [code, setCode] = useState("")
+  const API = import.meta.env.VITE_API_BASE || "http://localhost:5000"
 
   const handleSubmit = async () => {
     setLoading(true)
     setError(null)
 
     try {
-      const res = await fetch("http://localhost:5000/query_dataset", {
+      const res = await fetch(`${API}/query_dataset`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ file_path: filePath, query })

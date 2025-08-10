@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 
 export default function DatasetUpload({ onUploadSuccess }) {
+    const API = import.meta.env.VITE_API_BASE || "http://localhost:5000";
     const [file, setFile] = useState(null);
     const [uploadStatus, setUploadStatus] = useState("");
 
@@ -18,7 +19,7 @@ export default function DatasetUpload({ onUploadSuccess }) {
         formData.append("file", file);
 
         try {
-            const response = await fetch("http://localhost:5000/upload", {
+            const response = await fetch(`${API}/upload`, {
                 method: "POST",
                 body: formData,
             });

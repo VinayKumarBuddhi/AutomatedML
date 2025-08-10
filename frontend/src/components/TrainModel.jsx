@@ -8,13 +8,14 @@ export default function TrainModel({ filePath, task, onModelTrained }) {
   const [modelFilename, setModelFilename] = useState("");
   const [details, setDetails] = useState([]);
   const [error, setError] = useState("");
+  const API = import.meta.env.VITE_API_BASE || "http://localhost:5000";
 
   const handleTrainModel = async () => {
     setLoading(true);
     setError("");
 
     try {
-      const response = await fetch("http://localhost:5000/run_automl", {
+      const response = await fetch(`${API}/run_automl`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ file_path: filePath, task }),

@@ -1,8 +1,9 @@
 import React from "react";
 
 export default function DownloadModel({ filename }) {
+  const API = import.meta.env.VITE_API_BASE || "http://localhost:5000";
   const handleDownload = async () => {
-    const response = await fetch(`http://localhost:5000/download/${filename}`);
+    const response = await fetch(`${API}/download/${filename}`);
     if (response.ok) {
       const blob = await response.blob();
       const url = window.URL.createObjectURL(blob);
